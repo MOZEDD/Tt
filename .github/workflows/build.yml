@@ -8,23 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: unzip -q Tunes-Android.zip
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: '17' }
       - uses: gradle/actions/setup-gradle@v4
         with: { gradle-version: '8.9' }
-      - name: Build
-        shell: bash
-        working-directory: TunesAndroid
-        run: |
-          set -o pipefail
-          gradle assembleDebug --no-daemon --console=plain 2>&1 | tee build.log
-      - name: Show compile errors
-        if: failure()
-        working-directory: TunesAndroid
-        run: |
-          grep -E "^e: " build.log | head -40
+      - run: gradle assembleRelease --no-daemon
       - uses: actions/upload-artifact@v4
         with:
           name: Tunes-APK
-          path: TunesAndroid/app/build/outputs/apk/debug/app-debug.apk
+          path: app/build/outputs/apk/release/app-release.apk
